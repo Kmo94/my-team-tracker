@@ -1,56 +1,84 @@
 class View:
 
+    def welcome_page():
+        print("****************************************")
+        print("Welcome to My Teams Tracker")
+        print("****************************************")
+        print("(1) New user")
+        print("(2) Returning user")
+        print("(0) Exit")
+        choice = input("Enter number: ")
+        return choice
+
+    def new_user_info():
+        print("****************************************")
+        print("Create a new user")
+        name = input("Enter your name: ")
+        email = input("Enter your email: ")
+        return name, email
+
+    def returning_user_id():
+        print("****************************************")
+        print("Returning user")
+        user_id = input("Enter your user id: ")
+        return user_id
+
+    def show_login_success(username, user_id):
+        print("****************************************")
+        print("Logged in as", username, "id", user_id)
+
+    def show_login_failed():
+        print("****************************************")
+        print("User not found")
+
     def main_menu():
         print("****************************************")
-        print("          My Teams Tracker")
+        print("My Teams Tracker")
         print("****************************************")
         print("(1) Add favourite team")
         print("(2) Add favourite player")
         print("(3) Show favourite teams")
         print("(4) Show favourite players")
-        print("(5) View team scores  (not finished)")
-        print("(6) View player stats (not finished)")
-        print("(0) Exit")
-        option = input("Enter number to select an option: ")
-        return option 
+        print("(5) View team scores")
+        print("(6) View player stats")
+        print("(0) Logout")
+        choice = input("Enter number: ")
+        return choice
 
     def ask_team_info():
         print("****************************************")
-        print("Add a favourite team")
-        team_name = input("Team name (e.g. Lakers, Cowboys): ")
+        print("Add favourite team")
+        team_name = input("Team name: ")
         sport = input("Sport (NBA or NFL): ")
         return team_name, sport
 
     def ask_player_info():
         print("****************************************")
-        print("Add a favourite player")
-        first_name = input("Player first name: ")
-        last_name = input("Player last name: ")
+        print("Add favourite player")
+        first = input("First name: ")
+        last = input("Last name: ")
         sport = input("Sport (NBA or NFL): ")
-        full_name = first_name + " " + last_name
+        full_name = first + " " + last
         return full_name, sport
 
     def show_favourite_teams(teams):
-        """
-        teams will later be a list of (team_name, sport)
-        For now, this can be called with an empty list or simple test data.
-        """
         print("****************************************")
-        print("Your favourite teams:")
+        print("Favourite teams")
         if not teams:
-            print("No favourite teams yet.")
+            print("None")
         else:
-            for team_name, sport in teams:
-                print("- " + team_name + " [" + sport + "]")
+            for name, sport in teams:
+                print("-", name, "[", sport, "]")
+
 
     def show_favourite_players(players):
         print("****************************************")
-        print("Your favourite players:")
+        print("Favourite players")
         if not players:
-            print("No favourite players yet.")
+            print("None")
         else:
-            for player_name, sport in players:
-                print("- " + player_name + " [" + sport + "]")
+            for name, sport in players:
+                print("-", name, "[", sport, "]")
 
     def show_message(message):
         print(message)
