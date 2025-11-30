@@ -64,6 +64,16 @@ class SportsDataAPI:
                 return g.get("Status"), g
         return None, None
 
+    def _nfl_last_game_stats(self, season, player_id):
+        for w in range(22, 0, -1):
+            url = f"{base_url}/nfl/stats/json/PlayerGameStatsByWeek/{season}/{w}"
+            data = self._safe_get(url)
+            if isinstance(data, list):
+                for p in data:
+                    if p.get("PlayerID") == player_id:
+                        return p
+        return None
+
     def player_live_stats_today(self, league, player_id, team_code):
         league = league.upper()
 
@@ -79,18 +89,7 @@ class SportsDataAPI:
 
         if league == "NFL":
             season = self.current_api_season("NFL")
-            w_url = f"{base_url}/nfl/scores/json/CurrentWeek"
-            week = self._safe_get(w_url)
-
-            if week:
-                url = f"{base_url}/nfl/stats/json/PlayerGameStatsByWeek/{season}/{week}"
-                stats = self._safe_get(url)
-                if isinstance(stats, list):
-                    for p in stats:
-                        if p.get("PlayerID") == player_id:
-                            return p
-
-            return None
+            return self._nfl_last_game_stats(season, player_id)
 
         return None
 
@@ -107,14 +106,7 @@ class SportsDataAPI:
             return None
 
         if league == "NFL":
-            season = api_season
-            for w in range(18, 0, -1):
-                url = f"{base_url}/nfl/stats/json/PlayerGameStatsByWeek/{season}/{w}"
-                data = self._safe_get(url)
-                if isinstance(data, list):
-                    for p in data:
-                        if p.get("PlayerID") == player_id:
-                            return p
-            return None
+            season = api_season or self.current_api_season("NFL")
+            return self._nfl_last_game_stats(season, player_id)
 
         return None

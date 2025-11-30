@@ -1,193 +1,226 @@
 class View:
 
     @staticmethod
-    def print_line(title=None):
-        print("****************************************")
-        if title:
-            print(title)
-
-    @staticmethod
-    def print_numbered_list(items):
-        for i, item in enumerate(items, start=1):
-            print(f"({i}) {item}")
-
-    @staticmethod
-    def get_index_choice(items):
-        choice = input("Enter number: ")
-        try:
-            idx = int(choice) - 1
-        except:
-            idx = 0
-        if idx < 0 or idx >= len(items):
-            idx = 0
-        return items[idx]
-
-    @staticmethod
     def welcome_page():
-        View.print_line("Welcome to My Team Tracker")
+        print("****************************************")
+        print("Welcome to My Teams Tracker")
+        print("****************************************")
         print("(1) New user")
         print("(2) Returning user")
-        return input("Enter number: ")
+        print("(0) Exit")
+        choice = input("Enter number: ")
+        return choice
 
     @staticmethod
     def new_user_info():
-        View.print_line("Create new user")
-        name = input("Enter username: ")
-        email = input("Enter email: ")
+        print("****************************************")
+        print("Create a new user")
+        name = input("Enter your name: ")
+        email = input("Enter your email: ")
         return name, email
 
     @staticmethod
     def returning_user_id():
-        View.print_line("Returning user")
-        return input("Enter your user ID: ")
+        print("****************************************")
+        print("Returning user")
+        user_id = input("Enter your user id: ")
+        return user_id
 
     @staticmethod
-    def show_login_success(name, user_id):
-        View.print_line()
-        print(f"Welcome, {name}! (User ID: {user_id})")
+    def show_login_success(username, user_id):
+        print("****************************************")
+        print("Logged in as", username, "id", user_id)
 
     @staticmethod
     def show_login_failed():
-        View.print_line()
-        print("Login failed. User not found.")
+        print("****************************************")
+        print("User not found")
 
     @staticmethod
     def main_menu():
-        View.print_line()
+        print("****************************************")
+        print("My Teams Tracker")
+        print("****************************************")
         print("(1) Add favourite team")
         print("(2) Add favourite player")
-        print("(3) View favourite teams")
-        print("(4) View favourite players")
+        print("(3) Show favourite teams")
+        print("(4) Show favourite players")
         print("(5) View team results")
         print("(6) View player stats")
         print("(0) Logout")
-        return input("Enter number: ")
+        choice = input("Enter number: ")
+        return choice
 
     @staticmethod
     def ask_team_sport():
-        View.print_line("Choose sport for the team")
-        return input("Sport (NBA, NFL, etc.): ")
+        print("****************************************")
+        print("Choose sport for the team")
+        sport = input("Sport (NBA or NFL): ")
+        return sport
 
     @staticmethod
     def choose_team_from_list(teams):
-        View.print_line("Choose a team")
+        print("****************************************")
+        print("Choose a team")
         if not teams:
-            print("No teams found.")
+            print("No teams found")
             return None
-
-        display = [f"{code} - {name}" for name, code in teams]
-        View.print_numbered_list(display)
-        return View.get_index_choice(teams)
+        i = 1
+        for name, code in teams:
+            print("(" + str(i) + ")", code, "-", name)
+            i += 1
+        choice = input("Enter number: ")
+        try:
+            index = int(choice) - 1
+        except ValueError:
+            index = 0
+        if index < 0 or index >= len(teams):
+            index = 0
+        return teams[index]
 
     @staticmethod
     def choose_team_from_favourites(teams):
-        View.print_line("Choose a favourite team")
+        print("****************************************")
+        print("Choose one of your favourite teams")
         if not teams:
-            print("You have no favourite teams.")
+            print("You have no favourite teams")
             return None
-
-        display = [f"{name} [{sport}]" for name, sport in teams]
-        View.print_numbered_list(display)
-        return View.get_index_choice(teams)
-
-    @staticmethod
-    def show_favourite_teams(teams):
-        View.print_line("Favourite teams")
-        if not teams:
-            print("None")
-            return
+        i = 1
         for name, sport in teams:
-            print(f"- {name} [{sport}]")
+            print("(" + str(i) + ")", name, "[", sport, "]")
+            i += 1
+        choice = input("Enter number: ")
+        try:
+            index = int(choice) - 1
+        except ValueError:
+            index = 0
+        if index < 0 or index >= len(teams):
+            index = 0
+        return teams[index]
 
     @staticmethod
     def ask_player_sport():
-        View.print_line("Add favourite player")
-        return input("Sport (NBA, NFL, etc.): ")
+        print("****************************************")
+        print("Add favourite player")
+        sport = input("Sport (NBA or NFL): ")
+        return sport
 
     @staticmethod
     def ask_position_code():
-        return input("Position code (e.g. SG, PG, QB, WR): ")
+        position = input("Position code (e.g. SG, PG, QB, WR): ")
+        return position
 
     @staticmethod
     def choose_player_from_list(players):
-        View.print_line("Choose a player")
+        print("****************************************")
+        print("Choose a player")
         if not players:
-            print("No players found for that team/position.")
+            print("No players found for that team/position")
             return None
-
-        display = [f"{name} - {pos}" for name, pos in players]
-        View.print_numbered_list(display)
-        return View.get_index_choice(players)
+        i = 1
+        for name, position in players:
+            print("(" + str(i) + ")", name, "-", position)
+            i += 1
+        choice = input("Enter number: ")
+        try:
+            index = int(choice) - 1
+        except ValueError:
+            index = 0
+        if index < 0 or index >= len(players):
+            index = 0
+        return players[index]
 
     @staticmethod
     def choose_player_from_favourites(players):
-        View.print_line("Choose a favourite player")
+        print("****************************************")
+        print("Choose one of your favourite players")
         if not players:
-            print("You have no favourite players.")
+            print("You have no favourite players")
             return None
+        i = 1
+        for name, sport in players:
+            print("(" + str(i) + ")", name, "[", sport, "]")
+            i += 1
+        choice = input("Enter number: ")
+        try:
+            index = int(choice) - 1
+        except ValueError:
+            index = 0
+        if index < 0 or index >= len(players):
+            index = 0
+        return players[index]
 
-        display = [f"{name} [{sport}]" for name, sport in players]
-        View.print_numbered_list(display)
-        return View.get_index_choice(players)
+    @staticmethod
+    def show_favourite_teams(teams):
+        print("****************************************")
+        print("Favourite teams")
+        if not teams:
+            print("None")
+        else:
+            for name, sport in teams:
+                print("-", name, "[", sport, "]")
 
     @staticmethod
     def show_favourite_players(players):
-        View.print_line("Favourite players")
+        print("****************************************")
+        print("Favourite players")
         if not players:
             print("None")
-            return
-        for name, sport in players:
-            print(f"- {name} [{sport}]")
-
+        else:
+            for name, sport in players:
+                print("-", name, "[", sport, "]")
 
     @staticmethod
     def show_game_result(game, team_code, league):
         home = game.get("HomeTeam")
         away = game.get("AwayTeam")
         status = game.get("Status")
-        day = game.get("Day") or game.get("Date")
-
+        day = game.get("Day")
+        if day is None:
+            day = game.get("Date")
+        
         if day and "T" in str(day):
             day = str(day).split("T")[0]
-
-        if league.upper() == "NBA":
-            home_score = game.get("HomeTeamScore")
-            away_score = game.get("AwayTeamScore")
-        else:
-            home_score = game.get("HomeTeamScore2") or game.get("HomeScore")
-            away_score = game.get("AwayTeamScore2") or game.get("AwayScore")
-
+        
+        home_score = game.get("HomeTeamScore")
+        away_score = game.get("AwayTeamScore")
+        
         if team_code == home:
             opponent = away
             where = "vs"
-            team_score = home_score
-            opp_score = away_score
         else:
             opponent = home
             where = "at"
-            team_score = away_score
-            opp_score = home_score
-
-        # Win/Loss/Tie
+        
         result = "-"
-        if team_score is not None and opp_score is not None:
-            if team_score > opp_score:
-                result = "W"
-            elif team_score < opp_score:
-                result = "L"
+        if home_score is not None and away_score is not None:
+            if team_code == home:
+                if home_score > away_score:
+                    result = "W"
+                elif home_score < away_score:
+                    result = "L"
+                else:
+                    result = "T"
             else:
-                result = "T"
-
-        print(f"{day} | {where} {opponent} | {result} - {status} | {away_score} at {home_score}")
+                if away_score > home_score:
+                    result = "W"
+                elif away_score < home_score:
+                    result = "L"
+                else:
+                    result = "T"
+        
+        print(day, "|", where, opponent, "|", result, "-", status, "|", away_score, "at", home_score)
 
     @staticmethod
     def show_team_standing(standing, league):
-        View.print_line("Season standings")
+        print("****************************************")
+        print("Season standings")
         if standing is None:
-            print("No standings found for this team.")
+            print("No standings found for this team")
             return
-
-        team = standing.get("Team") or standing.get("Name")
+        team = standing.get("Team")
+        if team is None:
+            team = standing.get("Name")
         conf = standing.get("Conference")
         div = standing.get("Division")
         wins = standing.get("Wins")
@@ -197,68 +230,180 @@ class View:
         pf = standing.get("PointsFor")
         pa = standing.get("PointsAgainst")
         net = standing.get("NetPoints")
-
+        
         print("Team:", team)
         if conf or div:
             print("Conference/Division:", conf or "", "/", div or "")
-        if ties:
-            print("Record:", wins, "-", losses, "-", ties)
-        else:
-            print("Record:", wins, "-", losses)
+        if wins is not None and losses is not None:
+            if ties:
+                print("Record:", wins, "-", losses, "-", ties)
+            else:
+                print("Record:", wins, "-", losses)
         if pct is not None:
             print("Win %:", round(pct, 3))
         if pf is not None and pa is not None:
             print("Points for:", pf, "| Points against:", pa, "| Net:", net or 0)
 
     @staticmethod
-    def show_player_live_stats(stats, league):
-        View.print_line("Live / today player stats")
-        if not stats:
-            print("No live stats for this player today.")
+    def show_recent_games(games, team_code, league):
+        print("****************************************")
+        print("Last 5 games")
+        if not games:
+            print("No recent games found")
             return
+        for g in games:
+            View.show_game_result(g, team_code, league)
 
-        name = stats.get("Name") or stats.get("PlayerName")
+    @staticmethod
+    def show_upcoming_games(games, team_code):
+        print("****************************************")
+        print("Upcoming games")
+        if not games:
+            print("No upcoming games found")
+            return
+        for g in games:
+            day = g.get("Day")
+            if day is None:
+                day = g.get("Date")
+            if day and "T" in str(day):
+                day = str(day).split("T")[0]
+            home = g.get("HomeTeam")
+            away = g.get("AwayTeam")
+            status = g.get("Status")
+            if status is None:
+                status = "Scheduled"
+            
+            if team_code == home:
+                opponent = away
+                where = "vs"
+            else:
+                opponent = home
+                where = "at"
+            print(day, "|", where, opponent, "|", status)
+
+    @staticmethod
+    def show_player_live_stats(stats, league):
+        print("****************************************")
+        print("TODAY'S GAME STATS")
+        if stats is None:
+            print("No game today")
+            return
+        name = stats.get("Name")
+        if name is None:
+            name = stats.get("PlayerName")
         print("Player:", name)
-
+        
         league = league.upper()
         if league == "NBA":
-            print("Minutes:", stats.get("Minutes"))
-            print("Points:", stats.get("Points"))
-            print("Rebounds:", stats.get("Rebounds"))
-            print("Assists:", stats.get("Assists"))
-            print("Steals:", stats.get("Steals"))
-            print("Blocks:", stats.get("BlockedShots"))
+            mins = stats.get("Minutes")
+            pts = stats.get("Points")
+            reb = stats.get("Rebounds")
+            ast = stats.get("Assists")
+            stl = stats.get("Steals")
+            blk = stats.get("BlockedShots")
+            fg_m = stats.get("FieldGoalsMade")
+            fg_a = stats.get("FieldGoalsAttempted")
+            tp_m = stats.get("ThreePointersMade")
+            tp_a = stats.get("ThreePointersAttempted")
+            tov = stats.get("Turnovers")
+            
+            if mins is not None:
+                print("Minutes:", mins)
+            if pts is not None:
+                print("Points:", pts)
+            if reb is not None:
+                print("Rebounds:", reb)
+            if ast is not None:
+                print("Assists:", ast)
+            if stl is not None:
+                print("Steals:", stl)
+            if blk is not None:
+                print("Blocks:", blk)
+            if fg_m is not None and fg_a is not None:
+                print("FG:", str(fg_m) + "/" + str(fg_a))
+            if tp_m is not None and tp_a is not None:
+                print("3PT:", str(tp_m) + "/" + str(tp_a))
+            if tov is not None:
+                print("Turnovers:", tov)
         else:
-            print("Passing yards:", stats.get("PassingYards"))
-            print("Rushing yards:", stats.get("RushingYards"))
-            print("Receiving yards:", stats.get("ReceivingYards"))
-            print("Touchdowns:", stats.get("Touchdowns") or stats.get("TotalTouchdowns"))
+            pass_yards = stats.get("PassingYards")
+            rush_yards = stats.get("RushingYards")
+            rec_yards = stats.get("ReceivingYards")
+            tds = stats.get("Touchdowns")
+            if tds is None:
+                tds = stats.get("TotalTouchdowns")
+            if pass_yards is not None:
+                print("Passing yards:", pass_yards)
+            if rush_yards is not None:
+                print("Rushing yards:", rush_yards)
+            if rec_yards is not None:
+                print("Receiving yards:", rec_yards)
+            if tds is not None:
+                print("Touchdowns:", tds)
 
     @staticmethod
     def show_player_season_stats(stats, league):
-        View.print_line("Season player stats (per game)")
-        if not stats:
-            print("No season stats found for this player.")
+        print("****************************************")
+        print("Season player stats (per game)")
+        if stats is None:
+            print("No season stats found for this player")
             return
-
-        name = stats.get("Name") or stats.get("PlayerName")
-        games = stats.get("Games") or stats.get("GamesPlayed") or 0
-
+        name = stats.get("Name")
+        if name is None:
+            name = stats.get("PlayerName")
+        games = stats.get("Games")
+        if games is None:
+            games = stats.get("GamesPlayed")
+        if games is None:
+            games = 0
         print("Player:", name)
-        print("Games played:", games)
-
+        if games:
+            print("Games played:", games)
         league = league.upper()
         if league == "NBA":
+            pts = stats.get("Points")
+            reb = stats.get("Rebounds")
+            ast = stats.get("Assists")
+            stl = stats.get("Steals")
+            blk = stats.get("BlockedShots")
+            fg_m = stats.get("FieldGoalsMade")
+            fg_a = stats.get("FieldGoalsAttempted")
+            tp_m = stats.get("ThreePointersMade")
+            tp_a = stats.get("ThreePointersAttempted")
+            tov = stats.get("Turnovers")
             if games:
-                print("Points:", round(stats.get("Points") / games, 1))
-                print("Rebounds:", round(stats.get("Rebounds") / games, 1))
-                print("Assists:", round(stats.get("Assists") / games, 1))
+                if pts is not None:
+                    print("Points:", round(pts / games, 1))
+                if reb is not None:
+                    print("Rebounds:", round(reb / games, 1))
+                if ast is not None:
+                    print("Assists:", round(ast / games, 1))
+                if stl is not None:
+                    print("Steals:", round(stl / games, 1))
+                if blk is not None:
+                    print("Blocks:", round(blk / games, 1))
+                if fg_m is not None and fg_a is not None and fg_a:
+                    print("FG per game:", str(round(fg_m / games,1)) + "/" + str(round(fg_a / games,1)))
+                if tp_m is not None and tp_a is not None and tp_a:
+                    print("3PT per game:", str(round(tp_m / games,1)) + "/" + str(round(tp_a / games,1)))
+                if tov is not None:
+                    print("Turnovers:", round(tov / games, 1))
         else:
+            pass_yards = stats.get("PassingYards")
+            rush_yards = stats.get("RushingYards")
+            rec_yards = stats.get("ReceivingYards")
+            tds = stats.get("Touchdowns")
+            if tds is None:
+                tds = stats.get("TotalTouchdowns")
             if games:
-                print("Passing yards per game:", round(stats.get("PassingYards") / games, 1))
-                print("Rushing yards per game:", round(stats.get("RushingYards") / games, 1))
-                print("Receiving yards per game:", round(stats.get("ReceivingYards") / games, 1))
-
+                if pass_yards is not None:
+                    print("Passing yards per game:", round(pass_yards / games, 1))
+                if rush_yards is not None:
+                    print("Rushing yards per game:", round(rush_yards / games, 1))
+                if rec_yards is not None:
+                    print("Receiving yards per game:", round(rec_yards / games, 1))
+                if tds is not None:
+                    print("Touchdowns per game:", round(tds / games, 2))
 
     @staticmethod
     def show_message(message):
