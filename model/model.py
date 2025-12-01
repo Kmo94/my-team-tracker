@@ -32,11 +32,11 @@ class Model:
         cur.close()
         conn.close()
 
-    def add_favourite_player(self, user_id, player_name, sport):
+    def add_favourite_player(self, user_id, player_name, sport, api_player_id):
         conn = get_connection()
         cur = conn.cursor(buffered=True)
-        sql = "INSERT INTO favorite_players (user_id, player_name, sport) VALUES (%s, %s, %s)"
-        cur.execute(sql, (user_id, player_name, sport))
+        sql = "INSERT INTO favorite_players (user_id, player_name, sport, api_player_id) VALUES (%s, %s, %s, %s)"
+        cur.execute(sql, (user_id, player_name, sport, api_player_id))
         conn.commit()
         cur.close()
         conn.close()
@@ -54,12 +54,30 @@ class Model:
     def get_favourite_players(self, user_id):
         conn = get_connection()
         cur = conn.cursor(buffered=True)
-        sql = "SELECT player_name, sport FROM favorite_players WHERE user_id = %s"
+        sql = "SELECT player_name, sport, api_player_id FROM favorite_players WHERE user_id = %s"
         cur.execute(sql, (user_id,))
         rows = cur.fetchall()
         cur.close()
         conn.close()
         return rows
+
+    def remove_favourite_team(self, user_id, team_name, sport):
+        conn = get_connection()
+        cur = conn.cursor(buffered=True)
+        sql = "DELETE FROM favorite_teams WHERE user_id = %s AND team_name = %s AND sport = %s"
+        cur.execute(sql, (user_id, team_name, sport))
+        conn.commit()
+        cur.close()
+        conn.close()
+
+    def remove_favourite_player(self, user_id, player_name, sport):
+        conn = get_connection()
+        cur = conn.cursor(buffered=True)
+        sql = "DELETE FROM favorite_players WHERE user_id = %s AND player_name = %s AND sport = %s"
+        cur.execute(sql, (user_id, player_name, sport))
+        conn.commit()
+        cur.close()
+        conn.close()
 
     def get_teams_by_sport(self, sport):
         conn = get_connection()

@@ -64,49 +64,73 @@ class SportsDataAPI:
                 return g.get("Status"), g
         return None, None
 
-    def _nfl_last_game_stats(self, season, player_id):
-        for w in range(22, 0, -1):
-            url = f"{base_url}/nfl/stats/json/PlayerGameStatsByWeek/{season}/{w}"
-            data = self._safe_get(url)
-            if isinstance(data, list):
-                for p in data:
-                    if p.get("PlayerID") == player_id:
-                        return p
-        return None
+    def _get_current_nfl_week(self, season):
+        url = f"{base_url}/nfl/scores/json/Timeframes/current"
+        data = self._safe_get(url)
+        
+        if isinstance(data, list) and data:
+            for timeframe in data:
+                if timeframe.get("ApiWeek"):
+                    return timeframe.get("ApiWeek")
+        
+        for week in range(1, 23):
+            url = f"{base_url}/nfl/scores/json/ScoresByWeek/{season}/{week}"
+            scores = self._safe_get(url)
+            if scores and isinstance(scores, list):
+                for game in scores:
+                    status = game.get("Status", "")
+                    if status in ["InProgress", "Scheduled"]:
+                        return week
+        
+        return 1
 
-    def player_live_stats_today(self, league, player_id, team_code):
+    def player_live_stats_today(self, league, player_id):
         league = league.upper()
 
         if league == "NBA":
             today = date.today().isoformat()
-            url = f"{base_url}/nba/stats/json/PlayerGameStatsByDate/{today}"
-            data = self._safe_get(url)
-            if isinstance(data, list):
-                for p in data:
-                    if p.get("PlayerID") == player_id:
-                        return p
-            return None
+            url = f"{base_url}/nba/stats/json/PlayerGameStatsByPlayer/{today}/{player_id}"
+            return self._safe_get(url)
 
         if league == "NFL":
             season = self.current_api_season("NFL")
-            return self._nfl_last_game_stats(season, player_id)
+            current_week = self._get_current_nfl_week(season)
+            
+            if current_week:
+                url = f"{base_url}/nfl/stats/json/PlayerGameStatsByPlayerID/{season}/{current_week}/{player_id}"
+                return self._safe_get(url)
+            
+            return None
 
         return None
 
-    def player_season_stats(self, league, api_season, player_id, team_code):
+    def player_season_stats(self, league, api_season, player_id):
         league = league.upper()
 
         if league == "NBA":
             url = f"{base_url}/nba/stats/json/PlayerSeasonStatsByPlayer/{api_season}/{player_id}"
             data = self._safe_get(url)
+            
             if isinstance(data, list) and data:
                 return data[0]
             if isinstance(data, dict):
                 return data
+            
             return None
 
         if league == "NFL":
-            season = api_season or self.current_api_season("NFL")
-            return self._nfl_last_game_stats(season, player_id)
+            season = api_season
+            if season and isinstance(season, str) and len(season) == 4 and season.isdigit():
+                season = f"{season}REG"
+            
+            url = f"{base_url}/nfl/stats/json/PlayerSeasonStatsByPlayerID/{season}/{player_id}"
+            data = self._safe_get(url)
+            
+            if isinstance(data, list) and data:
+                return data[0]
+            if isinstance(data, dict):
+                return data
+            
+            return None
 
         return None

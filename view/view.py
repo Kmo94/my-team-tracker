@@ -47,6 +47,8 @@ class View:
         print("(4) Show favourite players")
         print("(5) View team results")
         print("(6) View player stats")
+        print("(7) Remove favourite team")
+        print("(8) Remove favourite player")
         print("(0) Logout")
         choice = input("Enter number: ")
         return choice
@@ -138,7 +140,7 @@ class View:
             print("You have no favourite players")
             return None
         i = 1
-        for name, sport in players:
+        for name, sport, api_player_id in players:
             print("(" + str(i) + ")", name, "[", sport, "]")
             i += 1
         choice = input("Enter number: ")
@@ -167,7 +169,7 @@ class View:
         if not players:
             print("None")
         else:
-            for name, sport in players:
+            for name, sport, api_player_id in players:
                 print("-", name, "[", sport, "]")
 
     @staticmethod
@@ -243,43 +245,7 @@ class View:
             print("Win %:", round(pct, 3))
         if pf is not None and pa is not None:
             print("Points for:", pf, "| Points against:", pa, "| Net:", net or 0)
-
-    @staticmethod
-    def show_recent_games(games, team_code, league):
-        print("****************************************")
-        print("Last 5 games")
-        if not games:
-            print("No recent games found")
-            return
-        for g in games:
-            View.show_game_result(g, team_code, league)
-
-    @staticmethod
-    def show_upcoming_games(games, team_code):
-        print("****************************************")
-        print("Upcoming games")
-        if not games:
-            print("No upcoming games found")
-            return
-        for g in games:
-            day = g.get("Day")
-            if day is None:
-                day = g.get("Date")
-            if day and "T" in str(day):
-                day = str(day).split("T")[0]
-            home = g.get("HomeTeam")
-            away = g.get("AwayTeam")
-            status = g.get("Status")
-            if status is None:
-                status = "Scheduled"
-            
-            if team_code == home:
-                opponent = away
-                where = "vs"
-            else:
-                opponent = home
-                where = "at"
-            print(day, "|", where, opponent, "|", status)
+   
 
     @staticmethod
     def show_player_live_stats(stats, league):

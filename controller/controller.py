@@ -44,6 +44,10 @@ class Controller:
                 self.handle_team_results()
             elif choice == "6":
                 self.handle_player_stats()
+            elif choice == "7":
+                self.handle_remove_team()
+            elif choice == "8":
+                self.handle_remove_player()
 
     def handle_add_team(self):
         sport = View.ask_team_sport()
@@ -61,14 +65,17 @@ class Controller:
         chosen_team = View.choose_team_from_list(teams)
         if chosen_team is None:
             return
-        team_name, team_key = chosen_team
+        team_name, team_code = chosen_team
         position = View.ask_position_code()
-        players = self.model.get_players_by_team_and_position(sport, team_key, position)
+        players = self.model.get_players_by_team_and_position(sport, team_code, position)
         chosen_player = View.choose_player_from_list(players)
         if chosen_player is None:
             return
         player_name, pos = chosen_player
-        self.model.add_favourite_player(self.current_user[0], player_name, sport.upper())
+        
+        api_player_id = self.model.get_player_id_by_name(sport, player_name)
+        
+        self.model.add_favourite_player(self.current_user[0], player_name, sport.upper(), api_player_id)
         View.show_message("Favourite player added")
 
     def handle_show_teams(self):
@@ -84,21 +91,17 @@ class Controller:
         chosen = View.choose_team_from_favourites(teams)
         if chosen is None:
             return
-
         team_name, sport = chosen
         league = sport.upper()
         team_code = self.model.get_team_key_by_name(team_name, league)
-
         if team_code is None:
             View.show_message("Could not find team code for " + team_name)
             return
-
         status, game = self.api_client.find_team_game_today(league, team_code)
         if game is not None:
             print("****************************************")
             print("Today's Game")
             View.show_game_result(game, team_code, league)
-
         api_season = self.api_client.current_api_season(league)
         standing = self.api_client.team_standing(league, team_code, api_season)
         View.show_team_standing(standing, league)
@@ -108,23 +111,47 @@ class Controller:
         chosen = View.choose_player_from_favourites(players)
         if chosen is None:
             return
-
-        player_name, sport = chosen
+        player_name, sport, api_player_id = chosen
         league = sport.upper()
-
-        player_id = self.model.get_player_id_by_name(league, player_name)
-        if player_id is None:
+        
+        if api_player_id is None:
+            api_player_id = self.model.get_player_id_by_name(league, player_name)
+        
+        if api_player_id is None:
             View.show_message("Could not find player id for " + player_name)
             return
 
-        team_code = self.model.get_player_team_key(league, player_name)
-        if team_code is None:
-            View.show_message("Could not find team code for this player")
-            return
-
-        live_stats = self.api_client.player_live_stats_today(league, player_id, team_code)
-        View.show_player_live_stats(live_stats, league)
+        live_stats = self.api_client.player_live_stats_today(league, api_player_id)
+        if live_stats:
+            View.show_player_live_stats(live_stats, league)
+        else:
+            print("****************************************")
+            print("No game today for this player")
 
         api_season = self.api_client.current_api_season(league)
-        season_stats = self.api_client.player_season_stats(league, api_season, player_id, team_code)
+        season_stats = self.api_client.player_season_stats(league, api_season, api_player_id)
         View.show_player_season_stats(season_stats, league)
+
+    def handle_remove_team(self):
+        teams = self.model.get_favourite_teams(self.current_user[0])
+        if not teams:
+            View.show_message("You have no favourite teams to remove")
+            return
+        chosen = View.choose_team_from_favourites(teams)
+        if chosen is None:
+            return
+        team_name, sport = chosen
+        self.model.remove_favourite_team(self.current_user[0], team_name, sport)
+        View.show_message("Favourite team removed")
+
+    def handle_remove_player(self):
+        players = self.model.get_favourite_players(self.current_user[0])
+        if not players:
+            View.show_message("You have no favourite players to remove")
+            return
+        chosen = View.choose_player_from_favourites(players)
+        if chosen is None:
+            return
+        player_name, sport, api_player_id = chosen
+        self.model.remove_favourite_player(self.current_user[0], player_name, sport)
+        View.show_message("Favourite player removed")
